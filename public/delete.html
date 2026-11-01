@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Record | College Hostel Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="insert.html" class="nav-link">➕ Insert</a>
+      <a href="list.html" class="nav-link">📋 View All</a>
+      <a href="listOne.html" class="nav-link">🔍 Search One</a>
+      <a href="update.html" class="nav-link">✏️ Update</a>
+      <a href="delete.html" class="nav-link active">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill">
+      <span class="db-dot"></span>
+      <span>MySQL: college</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <div>
+        <h1>🗑️ Delete / Remove Record</h1>
+        <p>Permanently remove records from database tables by ID or Identifier with safety confirmation.</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-outline">&larr; Back to Main Menu</a>
+      </div>
+    </header>
+
+    <!-- Subnav Tabs -->
+    <div class="subnav-tabs">
+      <button class="tab-btn active" id="tab-btn-student" onclick="switchDeleteTab('student')">1. Delete Student</button>
+      <button class="tab-btn" id="tab-btn-room" onclick="switchDeleteTab('room')">2. Delete Room</button>
+      <button class="tab-btn" id="tab-btn-allocation" onclick="switchDeleteTab('allocation')">3. Delete Allocation</button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alert-box" class="alert"></div>
+
+    <!-- 1. DELETE STUDENT -->
+    <div id="card-delete-student" class="card" style="border-top: 4px solid #dc2626;">
+      <div class="card-header">
+        <span class="card-title">Delete Student Record (<code>students</code>)</span>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="previewDeleteStudent(event)">
+          <div class="form-group" style="max-width: 500px;">
+            <label class="form-label">Enter Student Roll Number or Student ID: <span class="req">*</span></label>
+            <input type="text" id="del-student-input" class="form-control" placeholder="e.g. 21CS001 or 1" required>
+            <span class="form-hint">Note: Students with active room allocations cannot be deleted until vacated.</span>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-blue">🔍 Verify & Preview Student</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Reset</button>
+          </div>
+        </form>
+
+        <!-- Preview Card -->
+        <div id="student-delete-preview" style="display: none; margin-top: 20px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff5f5;">
+          <h4 style="color: #b91c1c; margin-bottom: 10px;">⚠️ Confirm Deletion</h4>
+          <p id="student-preview-details" style="font-size: 14px; margin-bottom: 14px; color: #1e293b;"></p>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-red" id="btn-confirm-del-student">🗑️ Yes, Delete Student</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. DELETE ROOM -->
+    <div id="card-delete-room" class="card" style="display: none; border-top: 4px solid #dc2626;">
+      <div class="card-header">
+        <span class="card-title">Delete Room Record (<code>rooms</code>)</span>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="previewDeleteRoom(event)">
+          <div class="form-group" style="max-width: 500px;">
+            <label class="form-label">Enter Room Number or Room ID: <span class="req">*</span></label>
+            <input type="text" id="del-room-input" class="form-control" placeholder="e.g. A-101 or 101" required>
+            <span class="form-hint">Note: Rooms with active occupants (occupied > 0) cannot be deleted.</span>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-blue">🔍 Verify & Preview Room</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Reset</button>
+          </div>
+        </form>
+
+        <!-- Preview Card -->
+        <div id="room-delete-preview" style="display: none; margin-top: 20px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff5f5;">
+          <h4 style="color: #b91c1c; margin-bottom: 10px;">⚠️ Confirm Deletion</h4>
+          <p id="room-preview-details" style="font-size: 14px; margin-bottom: 14px; color: #1e293b;"></p>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-red" id="btn-confirm-del-room">🗑️ Yes, Delete Room</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. DELETE ALLOCATION -->
+    <div id="card-delete-allocation" class="card" style="display: none; border-top: 4px solid #dc2626;">
+      <div class="card-header">
+        <span class="card-title">Delete Allocation Record (<code>allocations</code>)</span>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="previewDeleteAlloc(event)">
+          <div class="form-group" style="max-width: 500px;">
+            <label class="form-label">Enter Allocation ID: <span class="req">*</span></label>
+            <input type="number" id="del-alloc-input" class="form-control" placeholder="e.g. 1" required>
+            <span class="form-hint">Deleting an active allocation will also free up the room's bed space.</span>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="submit" class="btn btn-blue">🔍 Verify & Preview Allocation</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Reset</button>
+          </div>
+        </form>
+
+        <!-- Preview Card -->
+        <div id="alloc-delete-preview" style="display: none; margin-top: 20px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff5f5;">
+          <h4 style="color: #b91c1c; margin-bottom: 10px;">⚠️ Confirm Deletion</h4>
+          <p id="alloc-preview-details" style="font-size: 14px; margin-bottom: 14px; color: #1e293b;"></p>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-red" id="btn-confirm-del-alloc">🗑️ Yes, Delete Allocation Record</button>
+            <button type="button" class="btn btn-gray" onclick="resetDelete()">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    College Hostel Management System &bull; Clean CRUD Portal
+  </footer>
+
+  <script>
+    function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alert-box');
+      box.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+      box.textContent = msg;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function clearAlert() {
+      document.getElementById('alert-box').style.display = 'none';
+    }
+
+    function resetDelete() {
+      document.getElementById('student-delete-preview').style.display = 'none';
+      document.getElementById('room-delete-preview').style.display = 'none';
+      document.getElementById('alloc-delete-preview').style.display = 'none';
+    }
+
+    function switchDeleteTab(type) {
+      clearAlert();
+      resetDelete();
+      ['student', 'room', 'allocation'].forEach(t => {
+        document.getElementById('card-delete-' + t).style.display = t === type ? 'block' : 'none';
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === type);
+      });
+    }
+
+    // Auto-detect URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type') || 'student';
+    const preId = urlParams.get('id');
+
+    switchDeleteTab(initialType);
+    if (preId) {
+      if (initialType === 'student') {
+        document.getElementById('del-student-input').value = preId;
+        previewDeleteStudent(new Event('submit'));
+      } else if (initialType === 'room') {
+        document.getElementById('del-room-input').value = preId;
+        previewDeleteRoom(new Event('submit'));
+      } else if (initialType === 'allocation') {
+        document.getElementById('del-alloc-input').value = preId;
+        previewDeleteAlloc(new Event('submit'));
+      }
+    }
+
+    // 1. Delete Student logic
+    async function previewDeleteStudent(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      clearAlert();
+      resetDelete();
+
+      const term = document.getElementById('del-student-input').value.trim();
+      if (!term) return;
+
+      const isNumeric = /^\d+$/.test(term);
+      const url = isNumeric ? `/api/students/lookup?id=${term}` : `/api/students/lookup?roll_no=${encodeURIComponent(term)}`;
+
+      try {
+        const res = await fetch(url);
+        const s = await res.json();
+        if (!res.ok) {
+          showAlert(s.error || 'Student not found.', false);
+          return;
+        }
+
+        const preview = document.getElementById('student-delete-preview');
+        const text = document.getElementById('student-preview-details');
+        const btn = document.getElementById('btn-confirm-del-student');
+
+        if (s.activeAllocation) {
+          showAlert(`Cannot delete ${s.name} (Roll: ${s.roll_no}). They currently have an active room allocation in Room ${s.activeAllocation.room_no}. Please vacate the room first.`, false);
+          return;
+        }
+
+        text.innerHTML = `Are you sure you want to permanently delete student <strong>${s.name}</strong> (Roll: <code>${s.roll_no}</code>, ID: #${s.student_id}, Branch: ${s.branch})?`;
+        preview.style.display = 'block';
+
+        btn.onclick = async () => {
+          try {
+            const delRes = await fetch(`/api/students/${s.student_id}`, { method: 'DELETE' });
+            const data = await delRes.json();
+            if (delRes.ok) {
+              showAlert(data.message || 'Student deleted successfully.', true);
+              resetDelete();
+              document.getElementById('del-student-input').value = '';
+            } else {
+              showAlert(data.error || 'Failed to delete student.', false);
+            }
+          } catch (err) {
+            showAlert('Network error: ' + err.message, false);
+          }
+        };
+      } catch (err) {
+        showAlert('Search error: ' + err.message, false);
+      }
+    }
+
+    // 2. Delete Room logic
+    async function previewDeleteRoom(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      clearAlert();
+      resetDelete();
+
+      const term = document.getElementById('del-room-input').value.trim();
+      if (!term) return;
+
+      const isNumeric = /^\d+$/.test(term);
+      const url = isNumeric ? `/api/rooms/lookup?id=${term}` : `/api/rooms/lookup?room_no=${encodeURIComponent(term)}`;
+
+      try {
+        const res = await fetch(url);
+        const r = await res.json();
+        if (!res.ok) {
+          showAlert(r.error || 'Room not found.', false);
+          return;
+        }
+
+        if (r.occupied > 0) {
+          showAlert(`Cannot delete Room ${r.room_no}. It currently has ${r.occupied} active occupant(s). Please vacate all beds first.`, false);
+          return;
+        }
+
+        const preview = document.getElementById('room-delete-preview');
+        const text = document.getElementById('room-preview-details');
+        const btn = document.getElementById('btn-confirm-del-room');
+
+        text.innerHTML = `Are you sure you want to permanently delete Room <strong>${r.room_no}</strong> (${r.block_name}, Capacity: ${r.capacity} beds, Current Occupants: 0)?`;
+        preview.style.display = 'block';
+
+        btn.onclick = async () => {
+          try {
+            const delRes = await fetch(`/api/rooms/${r.room_id}`, { method: 'DELETE' });
+            const data = await delRes.json();
+            if (delRes.ok) {
+              showAlert(data.message || 'Room deleted successfully.', true);
+              resetDelete();
+              document.getElementById('del-room-input').value = '';
+            } else {
+              showAlert(data.error || 'Failed to delete room.', false);
+            }
+          } catch (err) {
+            showAlert('Network error: ' + err.message, false);
+          }
+        };
+      } catch (err) {
+        showAlert('Search error: ' + err.message, false);
+      }
+    }
+
+    // 3. Delete Allocation logic
+    async function previewDeleteAlloc(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      clearAlert();
+      resetDelete();
+
+      const id = document.getElementById('del-alloc-input').value.trim();
+      if (!id) return;
+
+      try {
+        const res = await fetch(`/api/allocations/lookup?id=${id}`);
+        const a = await res.json();
+        if (!res.ok) {
+          showAlert(a.error || 'Allocation record not found.', false);
+          return;
+        }
+
+        const preview = document.getElementById('alloc-delete-preview');
+        const text = document.getElementById('alloc-preview-details');
+        const btn = document.getElementById('btn-confirm-del-alloc');
+
+        text.innerHTML = `Are you sure you want to permanently delete Allocation <strong>#${a.allocation_id}</strong> for student <strong>${a.student_name}</strong> (${a.roll_no}) in Room <strong>${a.room_no}</strong>? Status: <strong>${a.status}</strong>.`;
+        preview.style.display = 'block';
+
+        btn.onclick = async () => {
+          try {
+            const delRes = await fetch(`/api/allocations/${a.allocation_id}`, { method: 'DELETE' });
+            const data = await delRes.json();
+            if (delRes.ok) {
+              showAlert(data.message || 'Allocation record deleted successfully.', true);
+              resetDelete();
+              document.getElementById('del-alloc-input').value = '';
+            } else {
+              showAlert(data.error || 'Failed to delete allocation.', false);
+            }
+          } catch (err) {
+            showAlert('Network error: ' + err.message, false);
+          }
+        };
+      } catch (err) {
+        showAlert('Search error: ' + err.message, false);
+      }
+    }
+  </script>
+</body>
+</html>

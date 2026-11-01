@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search / List One Record | College Hostel Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="insert.html" class="nav-link">➕ Insert</a>
+      <a href="list.html" class="nav-link">📋 View All</a>
+      <a href="listOne.html" class="nav-link active">🔍 Search One</a>
+      <a href="update.html" class="nav-link">✏️ Update</a>
+      <a href="delete.html" class="nav-link">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill">
+      <span class="db-dot"></span>
+      <span>MySQL: college</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <div>
+        <h1>🔍 Search / List One Record</h1>
+        <p>Enter a primary key or unique identifier to fetch and inspect a single database row.</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-outline">&larr; Back to Main Menu</a>
+      </div>
+    </header>
+
+    <!-- Subnav Tabs -->
+    <div class="subnav-tabs">
+      <button class="tab-btn active" id="tab-btn-student" onclick="setSearchType('student')">1. Search Student</button>
+      <button class="tab-btn" id="tab-btn-room" onclick="setSearchType('room')">2. Search Room</button>
+      <button class="tab-btn" id="tab-btn-allocation" onclick="setSearchType('allocation')">3. Search Allocation</button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alert-box" class="alert"></div>
+
+    <!-- SEARCH INPUT CARD -->
+    <div class="card" style="border-top: 4px solid #7c3aed;">
+      <div class="card-header">
+        <span class="card-title" id="search-card-title">Search Student Record</span>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="executeSearch(event)">
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+            
+            <div style="flex: 1; min-width: 280px;">
+              <label class="form-label" id="search-input-label">Enter Student Roll Number or Student ID:</label>
+              <input type="text" id="search-term" class="form-control" placeholder="e.g. 21CS001 or 1" required>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+              <button type="submit" class="btn btn-blue">🔍 Fetch Record</button>
+              <button type="button" class="btn btn-gray" onclick="clearResults()">Clear</button>
+            </div>
+
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- RESULT DISPLAY CARD -->
+    <div id="result-card" class="card" style="display: none;">
+      <div class="card-header" style="background-color: #f1f5f9;">
+        <span class="card-title" id="result-title">Record Details</span>
+        <div id="result-action-buttons" style="display: flex; gap: 8px;"></div>
+      </div>
+      <div class="card-body" id="result-content"></div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    College Hostel Management System &bull; Clean CRUD Portal
+  </footer>
+
+  <script>
+    let currentType = 'student';
+
+    function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alert-box');
+      box.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function clearAlert() {
+      document.getElementById('alert-box').style.display = 'none';
+    }
+
+    function setSearchType(type) {
+      currentType = type;
+      clearAlert();
+      clearResults();
+
+      ['student', 'room', 'allocation'].forEach(t => {
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === type);
+      });
+
+      const title = document.getElementById('search-card-title');
+      const label = document.getElementById('search-input-label');
+      const input = document.getElementById('search-term');
+
+      if (type === 'student') {
+        title.textContent = 'Search Student Record';
+        label.textContent = 'Enter Student Roll Number or Student ID:';
+        input.placeholder = 'e.g. 21CS001 or 1';
+      } else if (type === 'room') {
+        title.textContent = 'Search Room Record';
+        label.textContent = 'Enter Room Number or Room ID:';
+        input.placeholder = 'e.g. A-101 or 101';
+      } else if (type === 'allocation') {
+        title.textContent = 'Search Allocation Record';
+        label.textContent = 'Enter Allocation ID or Student Roll Number:';
+        input.placeholder = 'e.g. 1 or 21CS001';
+      }
+    }
+
+    // Auto-detect URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type') || 'student';
+    setSearchType(initialType);
+
+    function clearResults() {
+      document.getElementById('result-card').style.display = 'none';
+      document.getElementById('search-term').value = '';
+    }
+
+    async function executeSearch(e) {
+      e.preventDefault();
+      clearAlert();
+      const term = document.getElementById('search-term').value.trim();
+      if (!term) return;
+
+      const isNumeric = /^\d+$/.test(term);
+
+      try {
+        let url = '';
+        if (currentType === 'student') {
+          url = isNumeric 
+            ? `/api/students/lookup?id=${term}` 
+            : `/api/students/lookup?roll_no=${encodeURIComponent(term)}`;
+        } else if (currentType === 'room') {
+          url = isNumeric 
+            ? `/api/rooms/lookup?id=${term}` 
+            : `/api/rooms/lookup?room_no=${encodeURIComponent(term)}`;
+        } else if (currentType === 'allocation') {
+          url = isNumeric 
+            ? `/api/allocations/lookup?id=${term}` 
+            : `/api/allocations/lookup?roll_no=${encodeURIComponent(term)}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!res.ok) {
+          showAlert(data.error || 'Record not found.', false);
+          document.getElementById('result-card').style.display = 'none';
+          return;
+        }
+
+        renderResult(data);
+      } catch (err) {
+        showAlert('Search error: ' + err.message, false);
+      }
+    }
+
+    function renderResult(data) {
+      const card = document.getElementById('result-card');
+      const title = document.getElementById('result-title');
+      const content = document.getElementById('result-content');
+      const actions = document.getElementById('result-action-buttons');
+
+      card.style.display = 'block';
+
+      if (currentType === 'student') {
+        title.innerHTML = `Student Record: <strong>${data.name}</strong> (${data.roll_no})`;
+        actions.innerHTML = `
+          <a href="update.html?type=student&id=${data.student_id}" class="btn btn-orange btn-sm">✏️ Edit</a>
+          <a href="delete.html?type=student&id=${data.student_id}" class="btn btn-red btn-sm">🗑️ Delete</a>
+        `;
+
+        let allocHtml = '<span style="color:#64748b;">No active room allocation</span>';
+        if (data.activeAllocation) {
+          allocHtml = `
+            <span class="badge badge-active">Active Stay</span>
+            Room <strong>${data.activeAllocation.room_no}</strong> (${data.activeAllocation.block_name}) - Allocated on ${data.activeAllocation.allocation_date}
+            <a href="update.html?type=vacate" class="btn btn-orange btn-sm" style="margin-left:8px;">Vacate</a>
+          `;
+        }
+
+        content.innerHTML = `
+          <div class="table-container table-responsive">
+            <table class="data-table" style="max-width: 800px;">
+              <tr><th style="width: 220px;">Student ID:</th><td><strong>#${data.student_id}</strong></td></tr>
+              <tr><th>Full Name:</th><td>${data.name}</td></tr>
+              <tr><th>Roll Number:</th><td><code>${data.roll_no}</code></td></tr>
+              <tr><th>Branch / Department:</th><td>${data.branch}</td></tr>
+              <tr><th>Student Phone:</th><td>📞 ${data.phone}</td></tr>
+              <tr><th>Parent / Guardian Phone:</th><td>👨‍👩‍👧 ${data.parent_phone}</td></tr>
+              <tr><th>Current Hostel Stay:</th><td>${allocHtml}</td></tr>
+            </table>
+          </div>
+        `;
+      } 
+      else if (currentType === 'room') {
+        title.innerHTML = `Room Record: <strong>${data.room_no}</strong> (${data.block_name})`;
+        actions.innerHTML = `
+          <a href="update.html?type=room&id=${data.room_id}" class="btn btn-orange btn-sm">✏️ Edit</a>
+          <a href="delete.html?type=room&id=${data.room_id}" class="btn btn-red btn-sm">🗑️ Delete</a>
+        `;
+
+        const badgeClass = {
+          'Available': 'badge-available',
+          'Full': 'badge-full',
+          'Maintenance': 'badge-maintenance'
+        }[data.status] || 'badge-available';
+
+        let occupantsHtml = '<span style="color:#64748b;">No occupants currently assigned</span>';
+        if (data.occupants && data.occupants.length > 0) {
+          occupantsHtml = `
+            <div class="dropdown-container" style="max-height: 140px; padding: 4px;">
+              <ul style="padding-left: 20px; line-height: 1.6;">
+                ${data.occupants.map(o => `<li><strong>${o.name}</strong> (${o.roll_no} - ${o.branch}) - 📞 ${o.phone}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        content.innerHTML = `
+          <div class="table-container table-responsive">
+            <table class="data-table" style="max-width: 800px;">
+              <tr><th style="width: 220px;">Room ID:</th><td><strong>#${data.room_id}</strong></td></tr>
+              <tr><th>Room Number:</th><td><strong>${data.room_no}</strong></td></tr>
+              <tr><th>Hostel Block:</th><td>${data.block_name}</td></tr>
+              <tr><th>Bed Capacity:</th><td>${data.capacity} Beds</td></tr>
+              <tr><th>Occupied Beds:</th><td>${data.occupied} Beds</td></tr>
+              <tr><th>Available Vacancy:</th><td><strong>${Math.max(0, data.capacity - data.occupied)}</strong> free beds</td></tr>
+              <tr><th>Room Status:</th><td><span class="badge ${badgeClass}">${data.status}</span></td></tr>
+              <tr><th>Current Occupants:</th><td>${occupantsHtml}</td></tr>
+            </table>
+          </div>
+        `;
+      }
+      else if (currentType === 'allocation') {
+        title.innerHTML = `Allocation Record: <strong>#${data.allocation_id}</strong>`;
+        actions.innerHTML = `
+          <a href="delete.html?type=allocation&id=${data.allocation_id}" class="btn btn-red btn-sm">🗑️ Delete</a>
+        `;
+
+        const isActive = data.status === 'Active';
+
+        content.innerHTML = `
+          <div class="table-container table-responsive">
+            <table class="data-table" style="max-width: 800px;">
+              <tr><th style="width: 220px;">Allocation ID:</th><td><strong>#${data.allocation_id}</strong></td></tr>
+              <tr><th>Student Name:</th><td><strong>${data.student_name}</strong> (Roll: <code>${data.roll_no}</code>)</td></tr>
+              <tr><th>Branch & Phone:</th><td>${data.branch} - 📞 ${data.phone}</td></tr>
+              <tr><th>Room Assigned:</th><td><strong>${data.room_no}</strong> (${data.block_name})</td></tr>
+              <tr><th>Allocation Date:</th><td>${data.allocation_date}</td></tr>
+              <tr><th>Vacate Date:</th><td>${data.vacate_date ? data.vacate_date : '<span style="color:#64748b;">— (Active Stay)</span>'}</td></tr>
+              <tr><th>Status:</th><td><span class="badge ${isActive ? 'badge-active' : 'badge-vacated'}">${data.status}</span></td></tr>
+            </table>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

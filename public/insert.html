@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insert Record | College Hostel Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="insert.html" class="nav-link active">➕ Insert</a>
+      <a href="list.html" class="nav-link">📋 View All</a>
+      <a href="listOne.html" class="nav-link">🔍 Search One</a>
+      <a href="update.html" class="nav-link">✏️ Update</a>
+      <a href="delete.html" class="nav-link">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill">
+      <span class="db-dot"></span>
+      <span>MySQL: college</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <div>
+        <h1>➕ Insert / Add New Record</h1>
+        <p>Choose an entity below to insert a new row into the respective database table.</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-outline">&larr; Back to Main Menu</a>
+      </div>
+    </header>
+
+    <!-- Tab Selection -->
+    <div class="subnav-tabs">
+      <button class="tab-btn active" id="tab-btn-student" onclick="showTab('student')">1. Insert Student</button>
+      <button class="tab-btn" id="tab-btn-room" onclick="showTab('room')">2. Insert Room</button>
+      <button class="tab-btn" id="tab-btn-allocation" onclick="showTab('allocation')">3. Allocate Bed</button>
+    </div>
+
+    <!-- Alert Message Box -->
+    <div id="alert-box" class="alert"></div>
+
+    <!-- TAB 1: Insert Student -->
+    <div id="panel-student" class="card" style="border-top: 4px solid #16a34a;">
+      <div class="card-header">
+        <span class="card-title">Insert Student Record (<code>students</code> table)</span>
+      </div>
+      <div class="card-body">
+        <form id="form-student" onsubmit="handleInsertStudent(event)">
+          <div class="form-grid">
+            
+            <div class="form-group">
+              <label class="form-label">Student Full Name <span class="req">*</span></label>
+              <input type="text" id="s-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Roll Number <span class="req">*</span></label>
+              <input type="text" id="s-roll" class="form-control" placeholder="e.g. 21CS050" required>
+              <span class="form-hint">Unique institutional ID</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Branch / Department <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="s-branch" class="form-control" required>
+                  <option value="">-- Select Branch --</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Electronics & Comm">Electronics & Comm</option>
+                  <option value="Mechanical Eng">Mechanical Eng</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Information Tech">Information Tech</option>
+                  <option value="AI & Data Science">AI & Data Science</option>
+                  <option value="Electrical Eng">Electrical Eng</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Student Phone Number <span class="req">*</span></label>
+              <input type="tel" id="s-phone" class="form-control" placeholder="10-digit phone" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Parent / Guardian Phone <span class="req">*</span></label>
+              <input type="tel" id="s-parent-phone" class="form-control" placeholder="10-digit phone" pattern="[0-9]{10}" required>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-green">➕ Insert Student Record</button>
+            <button type="reset" class="btn btn-gray">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 2: Insert Room -->
+    <div id="panel-room" class="card" style="display: none; border-top: 4px solid #16a34a;">
+      <div class="card-header">
+        <span class="card-title">Insert Room Record (<code>rooms</code> table)</span>
+      </div>
+      <div class="card-body">
+        <form id="form-room" onsubmit="handleInsertRoom(event)">
+          <div class="form-grid">
+            
+            <div class="form-group">
+              <label class="form-label">Room Number <span class="req">*</span></label>
+              <input type="text" id="r-no" class="form-control" placeholder="e.g. A-105" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Block Name <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="r-block" class="form-control" required>
+                  <option value="">-- Select Block --</option>
+                  <option value="Block A (Boys)">Block A (Boys)</option>
+                  <option value="Block B (Girls)">Block B (Girls)</option>
+                  <option value="Block C (Tech)">Block C (Tech)</option>
+                  <option value="Block D (PG)">Block D (PG)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Bed Capacity <span class="req">*</span></label>
+              <input type="number" id="r-capacity" class="form-control" min="1" max="6" value="3" required>
+              <span class="form-hint">Total number of beds</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Initial Status <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="r-status" class="form-control" required>
+                  <option value="Available" selected>Available</option>
+                  <option value="Maintenance">Maintenance</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-green">➕ Insert Room Record</button>
+            <button type="reset" class="btn btn-gray">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 3: Insert Allocation -->
+    <div id="panel-allocation" class="card" style="display: none; border-top: 4px solid #16a34a;">
+      <div class="card-header">
+        <span class="card-title">Allocate Bed (<code>allocations</code> table)</span>
+      </div>
+      <div class="card-body">
+        <form id="form-allocation" onsubmit="handleInsertAllocation(event)">
+          <div class="form-grid">
+            
+            <div class="form-group">
+              <label class="form-label">Select Student <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="a-student" class="form-control" required>
+                  <option value="">Loading eligible students...</option>
+                </select>
+              </div>
+              <span class="form-hint">Shows students without an active room</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Select Available Room <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="a-room" class="form-control" required>
+                  <option value="">Loading available rooms...</option>
+                </select>
+              </div>
+              <span class="form-hint">Shows rooms with unoccupied bed space</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Allocation Date <span class="req">*</span></label>
+              <input type="date" id="a-date" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Allocation ID <span style="font-weight: normal; color: #64748b;">(Optional)</span></label>
+              <input type="number" id="a-id" class="form-control" placeholder="Auto-generated if left empty">
+              <span class="form-hint">Leave blank to use MySQL AUTO_INCREMENT</span>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-green">➕ Confirm Bed Allocation</button>
+            <button type="reset" class="btn btn-gray">Reset</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    College Hostel Management System &bull; Clean CRUD Portal
+  </footer>
+
+  <script>
+    function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alert-box');
+      box.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+      box.textContent = msg;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showTab(type) {
+      ['student', 'room', 'allocation'].forEach(t => {
+        document.getElementById('panel-' + t).style.display = t === type ? 'block' : 'none';
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === type);
+      });
+      if (type === 'allocation') {
+        loadAllocationDropdowns();
+      }
+    }
+
+    // Set today's date
+    document.getElementById('a-date').value = new Date().toISOString().split('T')[0];
+
+    // Read URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type') || 'student';
+    showTab(initialType);
+
+    // Form: Insert Student
+    async function handleInsertStudent(e) {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById('s-name').value.trim(),
+        roll_no: document.getElementById('s-roll').value.trim(),
+        branch: document.getElementById('s-branch').value,
+        phone: document.getElementById('s-phone').value.trim(),
+        parent_phone: document.getElementById('s-parent-phone').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/students', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(`Student "${payload.name}" inserted successfully (ID: ${data.student_id}).`, true);
+          document.getElementById('form-student').reset();
+        } else {
+          showAlert(data.error || 'Failed to insert student.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+
+    // Form: Insert Room
+    async function handleInsertRoom(e) {
+      e.preventDefault();
+      const payload = {
+        room_no: document.getElementById('r-no').value.trim(),
+        block_name: document.getElementById('r-block').value,
+        capacity: parseInt(document.getElementById('r-capacity').value),
+        status: document.getElementById('r-status').value
+      };
+
+      try {
+        const res = await fetch('/api/rooms', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(`Room "${payload.room_no}" in ${payload.block_name} created successfully.`, true);
+          document.getElementById('form-room').reset();
+          document.getElementById('r-capacity').value = 3;
+        } else {
+          showAlert(data.error || 'Failed to insert room.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+
+    // Populate Allocation Dropdowns
+    async function loadAllocationDropdowns() {
+      const studentSelect = document.getElementById('a-student');
+      const roomSelect = document.getElementById('a-room');
+
+      try {
+        const [sRes, aRes, rRes] = await Promise.all([
+          fetch('/api/students'),
+          fetch('/api/allocations?status=Active'),
+          fetch('/api/rooms?availableOnly=true')
+        ]);
+        const students = await sRes.json();
+        const activeAllocs = await aRes.json();
+        const rooms = await rRes.json();
+
+        const activeIds = new Set(activeAllocs.map(a => a.student_id));
+        const freeStudents = students.filter(s => !activeIds.has(s.student_id));
+
+        studentSelect.innerHTML = freeStudents.length === 0
+          ? '<option value="">-- All students currently have rooms --</option>'
+          : '<option value="">-- Select Student --</option>' + freeStudents.map(s => 
+              `<option value="${s.student_id}">${s.name} (${s.roll_no} - ${s.branch})</option>`
+            ).join('');
+
+        roomSelect.innerHTML = rooms.length === 0
+          ? '<option value="">-- No rooms have available beds --</option>'
+          : '<option value="">-- Select Available Room --</option>' + rooms.map(r => 
+              `<option value="${r.room_id}">Room ${r.room_no} (${r.block_name}) - ${r.capacity - r.occupied} bed(s) free</option>`
+            ).join('');
+      } catch (err) {
+        showAlert('Failed to load dropdown records: ' + err.message, false);
+      }
+    }
+
+    // Form: Insert Allocation
+    async function handleInsertAllocation(e) {
+      e.preventDefault();
+      const payload = {
+        student_id: parseInt(document.getElementById('a-student').value),
+        room_id: parseInt(document.getElementById('a-room').value),
+        allocation_date: document.getElementById('a-date').value
+      };
+
+      const manualId = document.getElementById('a-id')?.value;
+      if (manualId && manualId.trim()) {
+        payload.allocation_id = parseInt(manualId.trim());
+      }
+
+      try {
+        const res = await fetch('/api/allocations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(data.message || 'Room allocated successfully!', true);
+          document.getElementById('form-allocation').reset();
+          document.getElementById('a-date').value = new Date().toISOString().split('T')[0];
+          loadAllocationDropdowns();
+        } else {
+          showAlert(data.error || 'Failed to allocate bed.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+  </script>
+</body>
+</html>

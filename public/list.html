@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View All Records | College Hostel Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="insert.html" class="nav-link">➕ Insert</a>
+      <a href="list.html" class="nav-link active">📋 View All</a>
+      <a href="listOne.html" class="nav-link">🔍 Search One</a>
+      <a href="update.html" class="nav-link">✏️ Update</a>
+      <a href="delete.html" class="nav-link">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill">
+      <span class="db-dot"></span>
+      <span>MySQL: college</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <div>
+        <h1>📋 List / View All Records</h1>
+        <p>Display full tabular records from the database with clear borders and rows.</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-outline">&larr; Back to Main Menu</a>
+      </div>
+    </header>
+
+    <!-- Subnav Tabs -->
+    <div class="subnav-tabs">
+      <button class="tab-btn active" id="tab-btn-students" onclick="switchTable('students')">1. Students Table</button>
+      <button class="tab-btn" id="tab-btn-rooms" onclick="switchTable('rooms')">2. Rooms Table</button>
+      <button class="tab-btn" id="tab-btn-allocations" onclick="switchTable('allocations')">3. Allocations Table</button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alert-box" class="alert"></div>
+
+    <!-- 1. STUDENTS TABLE CARD -->
+    <div id="card-students" class="card" style="border-top: 4px solid #2563eb;">
+      <div class="card-header">
+        <span class="card-title">All Students Table (<code>students</code>)</span>
+        <span class="badge" id="students-count-badge" style="background: #e2e8f0; color: #1e293b;">0 Records</span>
+      </div>
+      <div class="card-body">
+        
+        <div class="search-bar">
+          <input type="text" id="student-search-input" class="search-input" placeholder="Filter by Name, Roll No, or Phone..." oninput="filterStudentsTable()">
+          <div class="dropdown-container" style="max-width: 200px;">
+            <select id="student-branch-filter" class="form-control" onchange="loadStudents()">
+              <option value="">All Branches</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Electronics & Comm">Electronics & Comm</option>
+              <option value="Mechanical Eng">Mechanical Eng</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Information Tech">Information Tech</option>
+              <option value="AI & Data Science">AI & Data Science</option>
+            </select>
+          </div>
+          <a href="insert.html?type=student" class="btn btn-green btn-sm">+ Insert Student</a>
+        </div>
+
+        <div class="table-container table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Full Name</th>
+                <th>Roll No</th>
+                <th>Branch</th>
+                <th>Student Phone</th>
+                <th>Parent Phone</th>
+                <th style="width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody">
+              <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading students...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. ROOMS TABLE CARD -->
+    <div id="card-rooms" class="card" style="display: none; border-top: 4px solid #2563eb;">
+      <div class="card-header">
+        <span class="card-title">All Rooms Table (<code>rooms</code>)</span>
+        <span class="badge" id="rooms-count-badge" style="background: #e2e8f0; color: #1e293b;">0 Records</span>
+      </div>
+      <div class="card-body">
+        
+        <div class="search-bar">
+          <div class="dropdown-container" style="max-width: 220px;">
+            <select id="room-block-filter" class="form-control" onchange="loadRooms()">
+              <option value="">All Blocks</option>
+              <option value="Block A (Boys)">Block A (Boys)</option>
+              <option value="Block B (Girls)">Block B (Girls)</option>
+              <option value="Block C (Tech)">Block C (Tech)</option>
+            </select>
+          </div>
+
+          <div class="dropdown-container" style="max-width: 200px;">
+            <select id="room-status-filter" class="form-control" onchange="loadRooms()">
+              <option value="">All Statuses</option>
+              <option value="Available">Available</option>
+              <option value="Full">Full</option>
+              <option value="Maintenance">Maintenance</option>
+            </select>
+          </div>
+
+          <a href="insert.html?type=room" class="btn btn-green btn-sm">+ Insert Room</a>
+        </div>
+
+        <div class="table-container table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Room ID</th>
+                <th>Room No</th>
+                <th>Block Name</th>
+                <th>Capacity</th>
+                <th>Occupied</th>
+                <th>Vacant Beds</th>
+                <th>Status</th>
+                <th style="width: 140px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rooms-tbody">
+              <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading rooms...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. ALLOCATIONS TABLE CARD -->
+    <div id="card-allocations" class="card" style="display: none; border-top: 4px solid #2563eb;">
+      <div class="card-header">
+        <span class="card-title">All Allocations Table (<code>allocations</code>)</span>
+        <span class="badge" id="allocations-count-badge" style="background: #e2e8f0; color: #1e293b;">0 Records</span>
+      </div>
+      <div class="card-body">
+        
+        <div class="search-bar">
+          <div class="dropdown-container" style="max-width: 220px;">
+            <select id="alloc-status-filter" class="form-control" onchange="loadAllocations()">
+              <option value="">All Stays (Active & Vacated)</option>
+              <option value="Active">Active Stays Only</option>
+              <option value="Vacated">Vacated History Only</option>
+            </select>
+          </div>
+
+          <a href="insert.html?type=allocation" class="btn btn-green btn-sm">+ Allocate Bed</a>
+        </div>
+
+        <div class="table-container table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Alloc ID</th>
+                <th>Student Name</th>
+                <th>Roll No</th>
+                <th>Room & Block</th>
+                <th>Allocation Date</th>
+                <th>Vacate Date</th>
+                <th>Status</th>
+                <th style="width: 130px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="allocations-tbody">
+              <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading allocations...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    College Hostel Management System &bull; Clean CRUD Portal
+  </footer>
+
+  <script>
+    let rawStudents = [];
+
+    function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alert-box');
+      box.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function switchTable(type) {
+      ['students', 'rooms', 'allocations'].forEach(t => {
+        document.getElementById('card-' + t).style.display = t === type ? 'block' : 'none';
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === type);
+      });
+
+      if (type === 'students') loadStudents();
+      if (type === 'rooms') loadRooms();
+      if (type === 'allocations') loadAllocations();
+    }
+
+    // Auto-detect URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('type') || 'students';
+    switchTable(initialTab);
+
+    // 1. Load Students
+    async function loadStudents() {
+      const tbody = document.getElementById('students-tbody');
+      const branch = document.getElementById('student-branch-filter').value;
+      const url = branch ? `/api/students?branch=${encodeURIComponent(branch)}` : '/api/students';
+
+      try {
+        const res = await fetch(url);
+        rawStudents = await res.json();
+        renderStudentsTable(rawStudents);
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center;">Failed to load students: ${err.message}</td></tr>`;
+      }
+    }
+
+    function renderStudentsTable(list) {
+      const tbody = document.getElementById('students-tbody');
+      document.getElementById('students-count-badge').textContent = `${list.length} Records`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px; color: #64748b;">No student records found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(s => `
+        <tr>
+          <td><strong>#${s.student_id}</strong></td>
+          <td><strong>${s.name}</strong></td>
+          <td><code>${s.roll_no}</code></td>
+          <td>${s.branch}</td>
+          <td>${s.phone}</td>
+          <td>${s.parent_phone}</td>
+          <td>
+            <a href="update.html?type=student&id=${s.student_id}" class="btn btn-orange btn-sm">Edit</a>
+            <a href="delete.html?type=student&id=${s.student_id}" class="btn btn-red btn-sm">Delete</a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterStudentsTable() {
+      const term = document.getElementById('student-search-input').value.toLowerCase().trim();
+      const filtered = rawStudents.filter(s => 
+        s.name.toLowerCase().includes(term) ||
+        s.roll_no.toLowerCase().includes(term) ||
+        s.phone.includes(term)
+      );
+      renderStudentsTable(filtered);
+    }
+
+    // 2. Load Rooms
+    async function loadRooms() {
+      const tbody = document.getElementById('rooms-tbody');
+      const block = document.getElementById('room-block-filter').value;
+      const status = document.getElementById('room-status-filter').value;
+
+      const params = new URLSearchParams();
+      if (block) params.append('block', block);
+      if (status) params.append('status', status);
+
+      try {
+        const res = await fetch(`/api/rooms?${params.toString()}`);
+        const rooms = await res.json();
+        document.getElementById('rooms-count-badge').textContent = `${rooms.length} Records`;
+
+        if (rooms.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px; color: #64748b;">No rooms found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = rooms.map(r => {
+          const badgeClass = {
+            'Available': 'badge-available',
+            'Full': 'badge-full',
+            'Maintenance': 'badge-maintenance'
+          }[r.status] || 'badge-available';
+
+          const vacant = Math.max(0, r.capacity - r.occupied);
+
+          return `
+            <tr>
+              <td><strong>#${r.room_id}</strong></td>
+              <td><strong>${r.room_no}</strong></td>
+              <td>${r.block_name}</td>
+              <td>${r.capacity} Beds</td>
+              <td>${r.occupied}</td>
+              <td><strong>${vacant}</strong> free</td>
+              <td><span class="badge ${badgeClass}">${r.status}</span></td>
+              <td>
+                <a href="update.html?type=room&id=${r.room_id}" class="btn btn-orange btn-sm">Edit</a>
+                <a href="delete.html?type=room&id=${r.room_id}" class="btn btn-red btn-sm">Delete</a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Failed to load rooms: ${err.message}</td></tr>`;
+      }
+    }
+
+    // 3. Load Allocations
+    async function loadAllocations() {
+      const tbody = document.getElementById('allocations-tbody');
+      const status = document.getElementById('alloc-status-filter').value;
+      const url = status ? `/api/allocations?status=${encodeURIComponent(status)}` : '/api/allocations';
+
+      try {
+        const res = await fetch(url);
+        const allocs = await res.json();
+        document.getElementById('allocations-count-badge').textContent = `${allocs.length} Records`;
+
+        if (allocs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px; color: #64748b;">No allocations found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = allocs.map(a => {
+          const isActive = a.status === 'Active';
+          return `
+            <tr>
+              <td><strong>#${a.allocation_id}</strong></td>
+              <td><strong>${a.student_name}</strong></td>
+              <td><code>${a.roll_no}</code></td>
+              <td>${a.room_no} <span style="color:#64748b; font-size:12px;">(${a.block_name})</span></td>
+              <td>${a.allocation_date}</td>
+              <td>${a.vacate_date ? a.vacate_date : '<span style="color:#64748b;">— (Active)</span>'}</td>
+              <td><span class="badge ${isActive ? 'badge-active' : 'badge-vacated'}">${a.status}</span></td>
+              <td>
+                ${isActive ? `
+                  <button onclick="vacateAllocation(${a.allocation_id}, '${a.student_name}', '${a.room_no}')" class="btn btn-orange btn-sm">
+                    🚪 Vacate
+                  </button>
+                ` : `
+                  <span style="font-size:12px; color:#64748b;">Vacated</span>
+                `}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Failed to load allocations: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function vacateAllocation(id, studentName, roomNo) {
+      if (!confirm(`Are you sure you want to mark Room "${roomNo}" as VACATED for student "${studentName}"?`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/allocations/${id}/vacate`, { method: 'PUT' });
+        const result = await res.json();
+        if (res.ok) {
+          showAlert(result.message || 'Room vacated successfully.', true);
+          loadAllocations();
+        } else {
+          showAlert(result.error || 'Failed to vacate room.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+  </script>
+</body>
+</html>

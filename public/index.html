@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel Management Portal | Main Operations Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link active">🏠 Home</a>
+      <a href="insert.html" class="nav-link">➕ Insert</a>
+      <a href="list.html" class="nav-link">📋 View All</a>
+      <a href="listOne.html" class="nav-link">🔍 Search One</a>
+      <a href="update.html" class="nav-link">✏️ Update</a>
+      <a href="delete.html" class="nav-link">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill" id="db-indicator">
+      <span class="db-dot"></span>
+      <span id="db-status-text">MySQL Connected</span>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+    
+    <!-- Portal Header Banner -->
+    <header class="page-header">
+      <div>
+        <h1>Hostel Database CRUD Operations</h1>
+        <p>Select an operation card below to insert, view, search, modify, or delete database records.</p>
+      </div>
+      <div>
+        <span style="font-size: 13px; color: #475569; background: #e2e8f0; padding: 4px 10px; border-radius: 4px; font-weight: 600;">
+          Database: <strong>college</strong>
+        </span>
+      </div>
+    </header>
+
+    <!-- 5 Primary Operation Blocks (CRUD Cards Grid) -->
+    <div class="crud-grid">
+
+      <!-- 1. INSERT / ADD RECORD BLOCK -->
+      <div class="crud-block block-insert">
+        <div class="crud-block-header">
+          <span>➕ 1. INSERT / ADD RECORD</span>
+        </div>
+        <div class="crud-block-body">
+          <p class="crud-block-desc">
+            Add new entries into the MySQL database tables. Register new student profiles, configure new hostel rooms, or assign beds.
+          </p>
+          <div class="crud-actions">
+            <a href="insert.html?type=student" class="btn btn-green btn-block">➕ Insert Student</a>
+            <a href="insert.html?type=room" class="btn btn-green btn-block">➕ Insert Room</a>
+            <a href="insert.html?type=allocation" class="btn btn-green btn-block">➕ Allocate Bed</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. LIST / VIEW ALL BLOCK -->
+      <div class="crud-block block-list">
+        <div class="crud-block-header">
+          <span>📋 2. LIST / VIEW ALL RECORDS</span>
+        </div>
+        <div class="crud-block-body">
+          <p class="crud-block-desc">
+            Display full data tables for all registered students, hostel rooms, and allocations with clear borders and rows.
+          </p>
+          <div class="crud-actions">
+            <a href="list.html?type=students" class="btn btn-blue btn-block">📋 View All Students</a>
+            <a href="list.html?type=rooms" class="btn btn-blue btn-block">📋 View All Rooms</a>
+            <a href="list.html?type=allocations" class="btn btn-blue btn-block">📋 View All Allocations</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. SEARCH / LIST ONE BLOCK -->
+      <div class="crud-block block-search">
+        <div class="crud-block-header">
+          <span>🔍 3. SEARCH / LIST ONE RECORD</span>
+        </div>
+        <div class="crud-block-body">
+          <p class="crud-block-desc">
+            Look up detailed information for a single record by entering a Roll Number, Room Number, or Record ID.
+          </p>
+          <div class="crud-actions">
+            <a href="listOne.html?type=student" class="btn btn-blue btn-block">🔍 Search Student by Roll No / ID</a>
+            <a href="listOne.html?type=room" class="btn btn-blue btn-block">🔍 Search Room by Room No / ID</a>
+            <a href="listOne.html?type=allocation" class="btn btn-blue btn-block">🔍 Search Allocation by ID</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. UPDATE RECORD BLOCK -->
+      <div class="crud-block block-update">
+        <div class="crud-block-header">
+          <span>✏️ 4. UPDATE RECORD</span>
+        </div>
+        <div class="crud-block-body">
+          <p class="crud-block-desc">
+            Modify existing records in the database: edit student contact information, toggle room maintenance, or vacate rooms.
+          </p>
+          <div class="crud-actions">
+            <a href="update.html?type=student" class="btn btn-orange btn-block">✏️ Update Student Contact / Branch</a>
+            <a href="update.html?type=room" class="btn btn-orange btn-block">✏️ Update Room Status / Capacity</a>
+            <a href="update.html?type=vacate" class="btn btn-orange btn-block">🚪 Vacate Room Allocation</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. DELETE RECORD BLOCK -->
+      <div class="crud-block block-delete">
+        <div class="crud-block-header">
+          <span>🗑️ 5. DELETE RECORD</span>
+        </div>
+        <div class="crud-block-body">
+          <p class="crud-block-desc">
+            Remove records from database tables by Primary Key or Roll Number with safety verification.
+          </p>
+          <div class="crud-actions">
+            <a href="delete.html?type=student" class="btn btn-red btn-block">🗑️ Delete Student</a>
+            <a href="delete.html?type=room" class="btn btn-red btn-block">🗑️ Delete Room</a>
+            <a href="delete.html?type=allocation" class="btn btn-red btn-block">🗑️ Delete Allocation Record</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    College Hostel Management System &bull; Node.js &bull; Express &bull; MySQL2 &bull; Plain HTML/CSS/JS
+  </footer>
+
+  <script>
+    // Check connection health on load
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(d => {
+        const text = document.getElementById('db-status-text');
+        if (d.mode === 'mysql') {
+          text.textContent = 'MySQL Connected (' + d.database + ')';
+        } else {
+          text.textContent = 'In-Memory Demo Mode';
+        }
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Record | College Hostel Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">🏢</span>
+      <div>
+        <span class="brand-title">College Hostel Portal</span>
+        <span class="brand-subtitle">Database Management System</span>
+      </div>
+    </a>
+
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="insert.html" class="nav-link">➕ Insert</a>
+      <a href="list.html" class="nav-link">📋 View All</a>
+      <a href="listOne.html" class="nav-link">🔍 Search One</a>
+      <a href="update.html" class="nav-link active">✏️ Update</a>
+      <a href="delete.html" class="nav-link">🗑️ Delete</a>
+    </div>
+
+    <div class="db-pill">
+      <span class="db-dot"></span>
+      <span>MySQL: college</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <div>
+        <h1>✏️ Update / Modify Record</h1>
+        <p>Edit student details, update room capacity and maintenance availability, or vacate active stays.</p>
+      </div>
+      <div>
+        <a href="index.html" class="btn btn-outline">&larr; Back to Main Menu</a>
+      </div>
+    </header>
+
+    <!-- Subnav Tabs -->
+    <div class="subnav-tabs">
+      <button class="tab-btn active" id="tab-btn-student" onclick="switchUpdateTab('student')">1. Update Student</button>
+      <button class="tab-btn" id="tab-btn-room" onclick="switchUpdateTab('room')">2. Update Room Status</button>
+      <button class="tab-btn" id="tab-btn-vacate" onclick="switchUpdateTab('vacate')">3. Vacate Room Allocation</button>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alert-box" class="alert"></div>
+
+    <!-- 1. UPDATE STUDENT CARD -->
+    <div id="card-update-student" class="card" style="border-top: 4px solid #ea580c;">
+      <div class="card-header">
+        <span class="card-title">Modify Student Details (<code>students</code>)</span>
+        <div style="min-width: 280px;" class="dropdown-container">
+          <select id="select-student-picker" class="form-control" onchange="onStudentPickerChange(this.value)">
+            <option value="">-- Choose student to load --</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="handleUpdateStudent(event)">
+          <input type="hidden" id="u-student-id">
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Student Name <span class="req">*</span></label>
+              <input type="text" id="u-student-name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Roll Number <span class="req">*</span></label>
+              <input type="text" id="u-student-roll" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Branch / Department <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="u-student-branch" class="form-control" required>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Electronics & Comm">Electronics & Comm</option>
+                  <option value="Mechanical Eng">Mechanical Eng</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Information Tech">Information Tech</option>
+                  <option value="AI & Data Science">AI & Data Science</option>
+                  <option value="Electrical Eng">Electrical Eng</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Student Contact Phone <span class="req">*</span></label>
+              <input type="tel" id="u-student-phone" class="form-control" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Parent / Guardian Phone <span class="req">*</span></label>
+              <input type="tel" id="u-student-parent-phone" class="form-control" pattern="[0-9]{10}" required>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-orange">✏️ Save Student Updates</button>
+            <a href="list.html?type=students" class="btn btn-gray">Cancel</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- 2. UPDATE ROOM CARD -->
+    <div id="card-update-room" class="card" style="display: none; border-top: 4px solid #ea580c;">
+      <div class="card-header">
+        <span class="card-title">Modify Room Status & Capacity (<code>rooms</code>)</span>
+        <div style="min-width: 280px;" class="dropdown-container">
+          <select id="select-room-picker" class="form-control" onchange="onRoomPickerChange(this.value)">
+            <option value="">-- Choose room to load --</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="handleUpdateRoom(event)">
+          <input type="hidden" id="u-room-id">
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Room Number <span class="req">*</span></label>
+              <input type="text" id="u-room-no" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hostel Block Name <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="u-room-block" class="form-control" required>
+                  <option value="Block A (Boys)">Block A (Boys)</option>
+                  <option value="Block B (Girls)">Block B (Girls)</option>
+                  <option value="Block C (Tech)">Block C (Tech)</option>
+                  <option value="Block D (PG)">Block D (PG)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Bed Capacity <span class="req">*</span></label>
+              <input type="number" id="u-room-capacity" class="form-control" min="1" max="10" required>
+              <span class="form-hint" id="u-room-occupied-hint">Select a room to see current occupancy</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Room Status <span class="req">*</span></label>
+              <div class="dropdown-container">
+                <select id="u-room-status" class="form-control" required>
+                  <option value="Available">Available</option>
+                  <option value="Full">Full</option>
+                  <option value="Maintenance">Maintenance (Temporarily Closed)</option>
+                </select>
+              </div>
+              <span class="form-hint">Setting Maintenance excludes the room from vacancy lists</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-orange">✏️ Save Room Updates</button>
+            <a href="list.html?type=rooms" class="btn btn-gray">Cancel</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- 3. VACATE ROOM CARD -->
+    <div id="card-update-vacate" class="card" style="display: none; border-top: 4px solid #ea580c;">
+      <div class="card-header">
+        <span class="card-title">Vacate Active Room Allocation (<code>allocations</code>)</span>
+      </div>
+      <div class="card-body">
+        
+        <form onsubmit="handleVacateRoom(event)">
+          <div class="form-group" style="max-width: 600px;">
+            <label class="form-label">Select Active Room Allocation to Vacate <span class="req">*</span></label>
+            <div class="dropdown-container">
+              <select id="select-vacate-picker" class="form-control" required>
+                <option value="">Loading active allocations...</option>
+              </select>
+            </div>
+            <span class="form-hint">
+              This will set today's date as the <code>vacate_date</code>, update status to <strong>'Vacated'</strong>, and free up 1 bed in the room.
+            </span>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-orange">🚪 Mark Room as Vacated</button>
+            <a href="list.html?type=allocations" class="btn btn-gray">Cancel</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    College Hostel Management System &bull; Clean CRUD Portal
+  </footer>
+
+  <script>
+    function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alert-box');
+      box.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+      box.textContent = msg;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchUpdateTab(type) {
+      ['student', 'room', 'vacate'].forEach(t => {
+        document.getElementById('card-update-' + t).style.display = t === type ? 'block' : 'none';
+        document.getElementById('tab-btn-' + t).classList.toggle('active', t === type);
+      });
+      if (type === 'vacate') loadActiveAllocations();
+    }
+
+    // Auto-detect URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type') || 'student';
+    const preId = urlParams.get('id');
+
+    switchUpdateTab(initialType);
+    populateDropdowns().then(() => {
+      if (preId) {
+        if (initialType === 'student') loadStudentData(preId);
+        if (initialType === 'room') loadRoomData(preId);
+      }
+    });
+
+    async function populateDropdowns() {
+      try {
+        const [sRes, rRes] = await Promise.all([fetch('/api/students'), fetch('/api/rooms')]);
+        const students = await sRes.json();
+        const rooms = await rRes.json();
+
+        const sPicker = document.getElementById('select-student-picker');
+        sPicker.innerHTML = '<option value="">-- Choose student to load --</option>' +
+          students.map(s => `<option value="${s.student_id}">#${s.student_id} - ${s.name} (${s.roll_no})</option>`).join('');
+
+        const rPicker = document.getElementById('select-room-picker');
+        rPicker.innerHTML = '<option value="">-- Choose room to load --</option>' +
+          rooms.map(r => `<option value="${r.room_id}">#${r.room_id} - Room ${r.room_no} (${r.block_name}) [${r.status}]</option>`).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function onStudentPickerChange(id) {
+      if (id) loadStudentData(id);
+    }
+
+    async function loadStudentData(id) {
+      try {
+        const res = await fetch(`/api/students/${id}`);
+        const s = await res.json();
+        document.getElementById('u-student-id').value = s.student_id;
+        document.getElementById('u-student-name').value = s.name;
+        document.getElementById('u-student-roll').value = s.roll_no;
+        document.getElementById('u-student-branch').value = s.branch;
+        document.getElementById('u-student-phone').value = s.phone;
+        document.getElementById('u-student-parent-phone').value = s.parent_phone;
+        document.getElementById('select-student-picker').value = s.student_id;
+      } catch (err) {
+        showAlert('Failed to load student: ' + err.message, false);
+      }
+    }
+
+    async function handleUpdateStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById('u-student-id').value;
+      if (!id) {
+        showAlert('Please select a student from the dropdown first.', false);
+        return;
+      }
+
+      const payload = {
+        name: document.getElementById('u-student-name').value.trim(),
+        roll_no: document.getElementById('u-student-roll').value.trim(),
+        branch: document.getElementById('u-student-branch').value,
+        phone: document.getElementById('u-student-phone').value.trim(),
+        parent_phone: document.getElementById('u-student-parent-phone').value.trim()
+      };
+
+      try {
+        const res = await fetch(`/api/students/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(data.message || 'Student updated successfully!', true);
+          populateDropdowns();
+        } else {
+          showAlert(data.error || 'Failed to update student.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+
+    function onRoomPickerChange(id) {
+      if (id) loadRoomData(id);
+    }
+
+    async function loadRoomData(id) {
+      try {
+        const res = await fetch(`/api/rooms/${id}`);
+        const r = await res.json();
+        document.getElementById('u-room-id').value = r.room_id;
+        document.getElementById('u-room-no').value = r.room_no;
+        document.getElementById('u-room-block').value = r.block_name;
+        document.getElementById('u-room-capacity').value = r.capacity;
+        document.getElementById('u-room-status').value = r.status;
+        document.getElementById('u-room-occupied-hint').textContent = `Current Occupants: ${r.occupied} / ${r.capacity} beds`;
+        document.getElementById('select-room-picker').value = r.room_id;
+      } catch (err) {
+        showAlert('Failed to load room: ' + err.message, false);
+      }
+    }
+
+    async function handleUpdateRoom(e) {
+      e.preventDefault();
+      const id = document.getElementById('u-room-id').value;
+      if (!id) {
+        showAlert('Please select a room from the dropdown first.', false);
+        return;
+      }
+
+      const payload = {
+        room_no: document.getElementById('u-room-no').value.trim(),
+        block_name: document.getElementById('u-room-block').value,
+        capacity: parseInt(document.getElementById('u-room-capacity').value),
+        status: document.getElementById('u-room-status').value
+      };
+
+      try {
+        const res = await fetch(`/api/rooms/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(data.message || 'Room settings updated successfully!', true);
+          populateDropdowns();
+        } else {
+          showAlert(data.error || 'Failed to update room.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+
+    async function loadActiveAllocations() {
+      const picker = document.getElementById('select-vacate-picker');
+      try {
+        const res = await fetch('/api/allocations?status=Active');
+        const allocs = await res.json();
+        if (allocs.length === 0) {
+          picker.innerHTML = '<option value="">-- No active room allocations to vacate --</option>';
+          return;
+        }
+
+        picker.innerHTML = '<option value="">-- Choose active allocation to vacate --</option>' +
+          allocs.map(a => `<option value="${a.allocation_id}">Alloc #${a.allocation_id}: ${a.student_name} (${a.roll_no}) in Room ${a.room_no}</option>`).join('');
+      } catch (err) {
+        showAlert('Failed to load active allocations: ' + err.message, false);
+      }
+    }
+
+    async function handleVacateRoom(e) {
+      e.preventDefault();
+      const allocId = document.getElementById('select-vacate-picker').value;
+      if (!allocId) {
+        showAlert('Please choose an active allocation from the dropdown.', false);
+        return;
+      }
+
+      if (!confirm('Are you sure you want to mark this room stay as Vacated?')) return;
+
+      try {
+        const res = await fetch(`/api/allocations/${allocId}/vacate`, { method: 'PUT' });
+        const data = await res.json();
+        if (res.ok) {
+          showAlert(data.message || 'Room vacated and bed vacancy updated.', true);
+          loadActiveAllocations();
+        } else {
+          showAlert(data.error || 'Failed to vacate room.', false);
+        }
+      } catch (err) {
+        showAlert('Network error: ' + err.message, false);
+      }
+    }
+  </script>
+</body>
+</html>

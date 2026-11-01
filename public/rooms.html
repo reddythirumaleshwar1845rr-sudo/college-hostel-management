@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rooms & Occupancy | CampusNest Hostel</title>
+  <meta name="description" content="Hostel rooms management, bed capacity monitoring, block filters, and maintenance controls.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">🏨</div>
+      <div class="brand-info">
+        <span class="brand-title">CampusNest</span>
+        <span class="brand-subtitle">College Hostel Management</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">📊 Dashboard</a></li>
+      <li><a href="students.html" class="nav-link">🎓 Students</a></li>
+      <li><a href="rooms.html" class="nav-link active">🛏 Rooms</a></li>
+      <li><a href="allocations.html" class="nav-link">🔑 Allocations</a></li>
+      <li><a href="insert.html" class="nav-link">➕ New Entry</a></li>
+      <li><a href="update.html" class="nav-link">⚙ Update Records</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="db-status-pill">
+        <span class="status-dot"></span>
+        <span>Connecting...</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content" id="rooms-container">
+    
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="page-title-group">
+        <h1>🛏 Hostel Rooms & Bed Capacity</h1>
+        <p>Monitor room assignments, maintenance status, and bed vacancies by block.</p>
+      </div>
+      <div class="page-actions">
+        <a href="insert.html?tab=room" class="btn btn-primary">
+          ➕ Add New Room
+        </a>
+      </div>
+    </header>
+
+    <!-- Card with Controls & View Switcher -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Rooms Management</span>
+          <span class="badge" id="room-count-badge" style="background: rgba(99,102,241,0.2); color: #a5b4fc;">Loading...</span>
+        </div>
+
+        <!-- View Switcher -->
+        <div class="pill-group">
+          <button class="pill-btn active" id="btn-view-grid" onclick="switchRoomView('grid')">🔲 Grid View</button>
+          <button class="pill-btn" id="btn-view-table" onclick="switchRoomView('table')">📄 Table View</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%;">
+            <!-- Block Filter -->
+            <select id="room-block-filter" class="filter-select" style="min-width: 200px;">
+              <option value="all">All Blocks</option>
+              <option value="Block A (Boys)">Block A (Boys)</option>
+              <option value="Block B (Girls)">Block B (Girls)</option>
+              <option value="Block C (Tech)">Block C (Tech)</option>
+            </select>
+
+            <!-- Status Filter -->
+            <select id="room-status-filter" class="filter-select" style="min-width: 180px;">
+              <option value="all">All Statuses</option>
+              <option value="Available">Available (Has Vacancy)</option>
+              <option value="Full">Full (No Vacancy)</option>
+              <option value="Maintenance">Under Maintenance</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Grid View Mode -->
+        <div id="rooms-grid-view" class="rooms-grid">
+          <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">
+            Loading rooms...
+          </div>
+        </div>
+
+        <!-- Table View Mode (Hidden by default) -->
+        <div id="rooms-table-view" class="table-container table-responsive" style="display: none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Room ID</th>
+                <th>Room Number</th>
+                <th>Block Name</th>
+                <th>Total Capacity</th>
+                <th>Occupied</th>
+                <th>Current Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rooms-table-tbody">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                  Loading rooms table...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    CampusNest &bull; College Hostel Management System &bull; Node.js + Express + MySQL2
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    function switchRoomView(mode) {
+      const gridView = document.getElementById('rooms-grid-view');
+      const tableView = document.getElementById('rooms-table-view');
+      const btnGrid = document.getElementById('btn-view-grid');
+      const btnTable = document.getElementById('btn-view-table');
+
+      if (mode === 'grid') {
+        gridView.style.display = 'grid';
+        tableView.style.display = 'none';
+        btnGrid.classList.add('active');
+        btnTable.classList.remove('active');
+      } else {
+        gridView.style.display = 'none';
+        tableView.style.display = 'block';
+        btnGrid.classList.remove('active');
+        btnTable.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
